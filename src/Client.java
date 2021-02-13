@@ -61,7 +61,7 @@ public class Client
         try
         {
             // Create a new socket for TCP communication
-            socket = new Socket(inetAddress, port);
+            socket = new Socket("96.252.107.167", port);
 
             // Set IO streams from new socket
             inStream = new ObjectInputStream(socket.getInputStream());
