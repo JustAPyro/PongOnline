@@ -5,10 +5,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * Starts a server listening thread and listens for any connections, starting a new server thread for each incoming conneciton
+ * Starts a server listening thread and listens for any connections, starting a new server thread for each incoming connection
  *
  * Bugs: None known
  * @author Luke Hanna (Github.com/JustAPyro)
+ * @date Feb 14, 2021
  * @version 1.0
  */
 public class ServerListener
