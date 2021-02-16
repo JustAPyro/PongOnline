@@ -31,17 +31,18 @@ public class ServerListener
         catch (IOException e) // Error Creating server socket
         {
             // Notify the user and abort the server program
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("ERROR");
-            alert.setHeaderText("Could not create Server Socket, program must be aborted.");
+            System.out.println("Could not create Server Socket, program must be aborted.");
             return;
         }
 
-        // This loop runs continously checking for incoming connections
+        // This loop runs continuously checking for incoming connections
         while (true)
         {
             try
             {
+                // Let the user know we're now listening
+                System.out.println("Server Launched successfully, listening for connections...");
+
                 // Listen for connection, this blocks the thread
                 connectionSocket = listener.accept();
 
@@ -52,20 +53,23 @@ public class ServerListener
                 serverThread.start();
 
                 // Connection Initialized, inform the user
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("New Connection");
-                alert.setHeaderText("New connection formed successfully");
+                System.out.println("Connection Formed successfully!");
 
                 // Return to the top of the while loop, continue listening for new connections
             }
             catch (IOException e) // Error connecting to given client
             {
                 // Notify the user
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("ERROR");
-                alert.setHeaderText("Connection attempted but could not be established, returning to listening");
+                System.out.println("Connection attempted but could not be established, returning to listening");
             }
         }
     }
+
+    // For testing this is the main method that launches the server
+    public static void main(String[] args)
+    {
+        new ServerListener(9875); // Launch server on port 9875
+    }
+
 
 }

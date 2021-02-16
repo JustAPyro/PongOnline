@@ -35,10 +35,7 @@ public class ServerThread extends Thread
         catch (IOException e) // Couldn't get data stream from client connection
         {
             // Inform the user
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("ERROR");
-            alert.setHeaderText("Fatal Error: Could not get IO Streams from Client");
-            alert.show();
+            System.out.println("Fatal Error: Could not get IO Streams from Client");
             return;
         }
     }
@@ -61,10 +58,7 @@ public class ServerThread extends Thread
             catch (IOException | ClassNotFoundException e) // If there was an error reading the object
             {
                 // Inform the user
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("ERROR");
-                alert.setHeaderText("Error: Could not read data from client IO stream");
-                alert.show();
+                System.out.println("Error: Could not read data from client IO stream");
             }
         }
     }

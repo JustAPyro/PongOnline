@@ -1,9 +1,14 @@
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
+import java.net.Socket;
 
 /**
  * This is the client-side class that handles GUI and game loop
@@ -21,6 +26,11 @@ public class Client
     private Scene scene; // This is the area INSIDE the window that holds the game
     private int width = 900, height = 700; // Width and height of the window
 
+    // Some networking variables
+    private Socket socket; // This is the socket used to establish the TCP connection
+    private ObjectOutputStream outStream;   // IO Stream out
+    private ObjectInputStream inStream;     // IO stream in
+
     /**
      * Main constructor initializes a client-side pong game
      *
@@ -37,6 +47,28 @@ public class Client
         // Create a game canvas (We will use this to draw on)
         Canvas gameCanvas = new Canvas(width, height);
 
+        try
+        {
+            // Create a new socket for TCP communication
+            socket = new Socket(inetAddress, port);
+
+            // Set IO streams from new socket
+            inStream = new ObjectInputStream(socket.getInputStream());
+            outStream = new ObjectOutputStream(socket.getOutputStream());
+
+            // Send client initialization request
+            outStream.writeObject("init");
+            String response = (String) inStream.readObject();
+            System.out.println(response);
+        }
+        catch (IOException | ClassNotFoundException e)  // If there's an error with the IO
+        {
+            // Inform the user
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("Error establishing IO connection with server");
+            alert.show();
+        }
 
         StackPane layout = new StackPane(); // Create a layout to show how things are set up in the window
         layout.getChildren().add(gameCanvas); // Add the game canvas to our new layout

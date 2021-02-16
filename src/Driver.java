@@ -28,6 +28,8 @@ public class Driver extends Application
      */
     public void start(Stage primaryStage) throws UnknownHostException
     {
+        // For Testing purposes the start function creates a server and then a client
+
         new Client(primaryStage, InetAddress.getByName(null), 9875);
     }
 
