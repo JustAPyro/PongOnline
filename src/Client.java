@@ -1,5 +1,7 @@
+import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -31,6 +33,8 @@ public class Client
     private ObjectOutputStream outStream;   // IO Stream out
     private ObjectInputStream inStream;     // IO stream in
 
+
+
     /**
      * Main constructor initializes a client-side pong game
      *
@@ -46,6 +50,9 @@ public class Client
 
         // Create a game canvas (We will use this to draw on)
         Canvas gameCanvas = new Canvas(width, height);
+
+        // Creates the graphics context to draw on the canvas
+        GraphicsContext gc = gameCanvas.getGraphicsContext2D();
 
         try
         {
@@ -69,6 +76,18 @@ public class Client
             alert.setHeaderText("Error establishing IO connection with server");
             alert.show();
         }
+
+        // This timer is used for animation and holds at 60 FPS when possible
+        AnimationTimer timer = new AnimationTimer() {
+            @Override // This gets called every frame of the game by timer
+            public void handle(long timeStamp)
+            {
+
+                // Clear the screen before redrawing
+                gc.clearRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
+
+            }
+        };
 
         StackPane layout = new StackPane(); // Create a layout to show how things are set up in the window
         layout.getChildren().add(gameCanvas); // Add the game canvas to our new layout
