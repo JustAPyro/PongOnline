@@ -36,7 +36,7 @@ public class Client
     private ObjectOutputStream outStream;   // IO Stream out
     private ObjectInputStream inStream;     // IO stream in
 
-    private Player player = new Player(true, height/2);
+    private Player player = new Player(true, height/2, 0);
     private Player p2;
 
     /**
@@ -69,11 +69,13 @@ public class Client
 
             // Send client initialization request
             outStream.writeObject("init");
-            String response = (String) inStream.readObject();
-            System.out.println(response);
+            Player startingPlayer = (Player) inStream.readObject();
+            player = startingPlayer;
         }
         catch (IOException | ClassNotFoundException e)  // If there's an error with the IO
         {
+            e.printStackTrace();
+
             // Inform the user
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("ERROR");
@@ -91,15 +93,16 @@ public class Client
                 gc.clearRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
                 player.update();
 
+                /*
                 try {
-                    outStream.writeObject(player);
-                    p2 = (Player) inStream.readObject();
+                    //outStream.writeObject(player);
+                    //p2 = (Player) inStream.readObject();
 
-                } catch (IOException | ClassNotFoundException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-                p2.draw(gc);
+    */
+                //p2.draw(gc);
                 player.draw(gc);
 
             }

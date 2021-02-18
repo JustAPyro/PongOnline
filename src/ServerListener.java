@@ -19,6 +19,10 @@ public class ServerListener
 
     private Player[] players = new Player[2]; // Player Array
 
+    private int index; // Global variable dec
+    private ServerThread p1Thread; // Thread for player 1
+    private ServerThread p2Thread; // Thread for player 2
+
     /**
      * Main constructor initializes a server listener.
      *
@@ -49,11 +53,22 @@ public class ServerListener
                 // Listen for connection, this blocks the thread
                 connectionSocket = listener.accept();
 
-                // Connection found! Start new server thread to handle this connection
-                ServerThread serverThread = new ServerThread(connectionSocket);
-
-                // Start the newly created server thread to handle the connection
-                serverThread.start();
+                if (p1Thread == null || p1Thread.isActive() != true)
+                {
+                    p1Thread = new ServerThread(connectionSocket, players, 0);
+                    players[0] = new Player(true, 350, 0);
+                    p1Thread.start();
+                }
+                else if (p2Thread == null || p2Thread.isActive() != true)
+                {
+                    p2Thread = new ServerThread(connectionSocket, players, 1);
+                    players[1] = new Player(false, 350, 1);
+                    p2Thread.start();
+                }
+                else
+                {
+                    System.out.println("Already at max players! Please wait!");
+                }
 
                 // Connection Initialized, inform the user
                 System.out.println("Connection Formed successfully!");

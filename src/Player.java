@@ -1,5 +1,7 @@
 import javafx.scene.canvas.GraphicsContext;
 
+import java.io.Serializable;
+
 /**
  * Simple player class that gets passed around from server to client
  *
@@ -8,16 +10,17 @@ import javafx.scene.canvas.GraphicsContext;
  * @date Feb 18, 2021
  * @version 1.0
  */
-public class Player
+public class Player implements Serializable
 {
 
     // Variables based on if keys are up or down
     boolean upPressed = false;
     boolean downPressed = false;
 
-    int vel = 2;
+    int playerID; // This is the unique identifier for the player
+    int vel = 2; // How much the position is incremented by
     boolean left; // left or right player
-    int y;
+    int y; // Vertical position
 
     int height = 250; // Height of paddle
     int width = 25; // Width of the paddle
@@ -28,11 +31,13 @@ public class Player
      *
      * @param left can be "left" or "right" depending on which side the players paddle is on
      * @param y the vertical position of the paddle
+     * @param playerID unique identifier for the player
      */
-    public Player(boolean left, int y)
+    public Player(boolean left, int y, int playerID)
     {
         this.left = left;
         this.y = y;
+        this.playerID = playerID;
     }
 
     /**
@@ -55,6 +60,15 @@ public class Player
         this.downPressed = downPressed; // Apply the new state
     }
 
+    /**
+     * Returns the index of the player
+     *
+     * @return
+     */
+    public int getIndex()
+    {
+        return playerID;
+    }
 
     public void update()
     {
