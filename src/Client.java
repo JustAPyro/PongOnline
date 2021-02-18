@@ -4,6 +4,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class Client
     // GUI Elements initalized at class level for access
     private Stage window; // This is the actual window for the game
     private Scene scene; // This is the area INSIDE the window that holds the game
+    private GraphicsContext gc; // This is the *brush* that we use to draw things
     private int width = 900, height = 700; // Width and height of the window
 
     // Some networking variables
@@ -33,7 +35,7 @@ public class Client
     private ObjectOutputStream outStream;   // IO Stream out
     private ObjectInputStream inStream;     // IO stream in
 
-
+    private Player p1 = new Player(true, height/2);
 
     /**
      * Main constructor initializes a client-side pong game
@@ -52,7 +54,7 @@ public class Client
         Canvas gameCanvas = new Canvas(width, height);
 
         // Creates the graphics context to draw on the canvas
-        GraphicsContext gc = gameCanvas.getGraphicsContext2D();
+        gc = gameCanvas.getGraphicsContext2D();
 
         try
         {
@@ -85,9 +87,11 @@ public class Client
 
                 // Clear the screen before redrawing
                 gc.clearRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
+                p1.draw(gc);
 
             }
         };
+        timer.start();
 
         StackPane layout = new StackPane(); // Create a layout to show how things are set up in the window
         layout.getChildren().add(gameCanvas); // Add the game canvas to our new layout

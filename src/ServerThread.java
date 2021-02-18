@@ -61,7 +61,9 @@ public class ServerThread extends Thread
             {
                 // This is simply placeholder until a client has been scripted that sends objects
                 Object x = inStream.readObject();
-                outStream.writeObject("Thanks!");
+
+                if (x instanceof String && ((String) x).equals("init"))
+                    outStream.writeObject("z");
             }
             catch (IOException | ClassNotFoundException e) // If there was an error reading the object
             {

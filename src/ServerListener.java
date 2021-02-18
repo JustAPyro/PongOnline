@@ -16,6 +16,9 @@ public class ServerListener
 {
     private ServerSocket listener;      // This will be the server socket used to listen for incoming connecitons
     private Socket connectionSocket;    // This is the socket that will be generated when a connection is formed
+
+    private Player[] players = new Player[2]; // Player Array
+
     /**
      * Main constructor initializes a server listener.
      *
