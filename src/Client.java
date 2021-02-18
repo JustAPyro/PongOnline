@@ -3,6 +3,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -35,7 +36,8 @@ public class Client
     private ObjectOutputStream outStream;   // IO Stream out
     private ObjectInputStream inStream;     // IO stream in
 
-    private Player p1 = new Player(true, height/2);
+    private Player player = new Player(true, height/2);
+    private Player p2;
 
     /**
      * Main constructor initializes a client-side pong game
@@ -87,7 +89,18 @@ public class Client
 
                 // Clear the screen before redrawing
                 gc.clearRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
-                p1.draw(gc);
+                player.update();
+
+                try {
+                    outStream.writeObject(player);
+                    p2 = (Player) inStream.readObject();
+
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                p2.draw(gc);
+                player.draw(gc);
 
             }
         };
@@ -97,7 +110,21 @@ public class Client
         layout.getChildren().add(gameCanvas); // Add the game canvas to our new layout
         scene = new Scene(layout); // Now apply our layout (Canvas included) to our scene
 
-        // ----------- Input handling goes here ---------------------
+        // If the key is pressed adjust the player values
+        scene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.W)
+                player.setUpPressed(true);
+            if (event.getCode() == KeyCode.S)
+                player.setDownPressed(true);
+        });
+
+        // If the key is released adjust the player values
+        scene.setOnKeyReleased(event -> {
+            if (event.getCode() == KeyCode.W)
+                player.setUpPressed(false);
+            if (event.getCode() == KeyCode.S)
+                player.setDownPressed(false);
+        });
 
         // Apply the updated scene to the window and set to show
         window.setScene(scene);
