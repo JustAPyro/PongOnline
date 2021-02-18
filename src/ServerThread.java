@@ -17,8 +17,10 @@ import java.net.Socket;
 public class ServerThread extends Thread
 {
 
+    private boolean active; // This is used to determine if the thread is listening
     private ObjectOutputStream outStream; // This will be used to write to client
     private ObjectInputStream inStream; // This will be used to read from client
+    private Socket connectionSocket; // We save this so we can close it at the end
 
     /**
      * Main constructor initializes a server thread that will manage one client connection
@@ -27,7 +29,13 @@ public class ServerThread extends Thread
      */
     public ServerThread(Socket connection)
     {
+        // Save the connection to close later
+        this.connectionSocket = connection;
+
         try {
+            // Set active to true since it was just started
+            active = true;
+
             // Get the IO Data streams from client TCP connection
             outStream = new ObjectOutputStream(connection.getOutputStream());
             inStream = new ObjectInputStream(connection.getInputStream());
@@ -47,7 +55,7 @@ public class ServerThread extends Thread
     public void run()
     {
         // This runs an infinite loop managing the TCP connection with the client
-        while (true)
+        while (active)
         {
             try
             {
@@ -59,7 +67,21 @@ public class ServerThread extends Thread
             {
                 // Inform the user
                 System.out.println("Error: Could not read data from client IO stream");
+
+                // Connection was likely lost so stop the listening loop
+                active = false;
             }
         }
+
+        System.out.println("Connection broken, closing Server Thread");
+
+        try { // Closing out our IO streams so that we don't have any data leaksz
+            inStream.close();
+            outStream.close();
+            connectionSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
