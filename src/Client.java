@@ -5,7 +5,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -25,7 +24,7 @@ import java.net.Socket;
 public class Client
 {
 
-    // GUI Elements initalized at class level for access
+    // GUI Elements initialized at class level for access
     private Stage window; // This is the actual window for the game
     private Scene scene; // This is the area INSIDE the window that holds the game
     private GraphicsContext gc; // This is the *brush* that we use to draw things
@@ -36,8 +35,9 @@ public class Client
     private ObjectOutputStream outStream;   // IO Stream out
     private ObjectInputStream inStream;     // IO stream in
 
+    // Player variables we're drawing from
     private Player player = new Player(true, height/2, 0);
-    private Player p2;
+    private Player p2 = new Player(false, height/2, 1);
 
     /**
      * Main constructor initializes a client-side pong game
@@ -91,48 +91,67 @@ public class Client
 
                 // Clear the screen before redrawing
                 gc.clearRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
+
+                // Update the main player
                 player.update();
 
-                /*
-                try {
-                    //outStream.writeObject(player);
-                    //p2 = (Player) inStream.readObject();
+                try
+                {
+                    outStream.writeObject(player);  // Write the updated player
+                    outStream.reset();              // Reset the output stream so it disregards previously sent objects
+                    p2 = (Player) inStream.readObject(); // Read the object sent as response (The opposite player)
 
-                } catch (IOException e) {
+                }
+                catch (IOException e) { // If there was an error reading/writing to the IO stream
+
+                    // Notify the user and print the stack trace
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("ERROR");
+                    alert.setHeaderText("Error reading or writing from IO streams");
+                    alert.show();
                     e.printStackTrace();
                 }
-    */
-                //p2.draw(gc);
-                player.draw(gc);
+                catch (ClassNotFoundException e) { // If there was an error recognizing the recieved class
+
+                    // Notify the user and print the stack trace
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("ERROR");
+                    alert.setHeaderText("Error recognizing server sent objects.");
+                    alert.show();
+                    e.printStackTrace();
+                }
+
+                if (p2 != null) // p2 will be a null value recieved from server until a second client connects
+                    p2.draw(gc);        // Draw the second player (Updated from server)
+                player.draw(gc);    // Draw the first player (Updated from local data)
 
             }
         };
-        timer.start();
+        timer.start(); // Start the animation timer
 
-        StackPane layout = new StackPane(); // Create a layout to show how things are set up in the window
+        StackPane layout = new StackPane();   // Create a layout to show how things are set up in the window
         layout.getChildren().add(gameCanvas); // Add the game canvas to our new layout
-        scene = new Scene(layout); // Now apply our layout (Canvas included) to our scene
+        scene = new Scene(layout);            // Now apply our layout (Canvas included) to our scene
 
         // If the key is pressed adjust the player values
-        scene.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.W)
-                player.setUpPressed(true);
-            if (event.getCode() == KeyCode.S)
-                player.setDownPressed(true);
+        scene.setOnKeyPressed(event -> {        // For each event
+            if (event.getCode() == KeyCode.W)   // If key pressed is W
+                player.setUpPressed(true);      // Set player up-pressed to true
+            if (event.getCode() == KeyCode.S)   // If key pressed is S
+                player.setDownPressed(true);    // Sey player down-pressed to true
         });
 
         // If the key is released adjust the player values
-        scene.setOnKeyReleased(event -> {
-            if (event.getCode() == KeyCode.W)
-                player.setUpPressed(false);
-            if (event.getCode() == KeyCode.S)
-                player.setDownPressed(false);
+        scene.setOnKeyReleased(event -> {       // For event received
+            if (event.getCode() == KeyCode.W)   // if key released is W
+                player.setUpPressed(false);     // Set player up-pressed to false
+            if (event.getCode() == KeyCode.S)   // if key released is S
+                player.setDownPressed(false);   // Set player down-pressed to false
         });
 
         // Apply the updated scene to the window and set to show
         window.setScene(scene);
         window.show();
-
 
     }
 

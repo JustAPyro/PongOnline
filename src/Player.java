@@ -14,16 +14,16 @@ public class Player implements Serializable
 {
 
     // Variables based on if keys are up or down
-    boolean upPressed = false;
-    boolean downPressed = false;
+    private boolean upPressed = false;
+    private boolean downPressed = false;
 
-    int playerID; // This is the unique identifier for the player
-    int vel = 2; // How much the position is incremented by
-    boolean left; // left or right player
-    int y; // Vertical position
+    private int playerID; // This is the unique identifier for the player
+    private int vel = 2; // How much the position is incremented by
+    private boolean left; // left or right player
+    private int y; // Vertical position
 
-    int height = 250; // Height of paddle
-    int width = 25; // Width of the paddle
+    private int height = 250; // Height of paddle
+    private int width = 25; // Width of the paddle
 
 
     /**
@@ -63,13 +63,16 @@ public class Player implements Serializable
     /**
      * Returns the index of the player
      *
-     * @return
+     * @return playerID
      */
     public int getIndex()
     {
         return playerID;
     }
 
+    /**
+     * This is called every game frame and is where we do all game logic relating to player
+     */
     public void update()
     {
         if (upPressed)
@@ -94,7 +97,5 @@ public class Player implements Serializable
         // Draw the paddle rect
         gc.fillRect(x-width/2, y-height/2, width, height);
     }
-
-
 
 }

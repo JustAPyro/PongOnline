@@ -82,13 +82,14 @@ public class ServerThread extends Thread
                 // This is simply placeholder until a client has been scripted that sends objects
                 Object readObject = inStream.readObject();
 
+                // if a client requests initialization
                 if (readObject instanceof String && ((String) readObject).equals("init"))
                 {
+                    // Write the player associated with this serverthread to the client, (Mainly informing it of left/right status)
                     outStream.writeObject(players[playerIndex]);
-                    System.out.println("Object Written");
                 }
 
-                if (readObject instanceof Player)
+                if (readObject instanceof Player) // If the serverThread recieves a playerObject
                 {
                     Player player = (Player) readObject;    // Cast the read object to a Player
                     int index = player.getIndex();          // Get the index of the player

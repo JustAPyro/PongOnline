@@ -53,20 +53,25 @@ public class ServerListener
                 // Listen for connection, this blocks the thread
                 connectionSocket = listener.accept();
 
+                // If the player 1 thread is either unassigned or inactive
                 if (p1Thread == null || p1Thread.isActive() != true)
                 {
+                    // Create a new Server thread with new socket, and a new player to assign to it
                     p1Thread = new ServerThread(connectionSocket, players, 0);
                     players[0] = new Player(true, 350, 0);
                     p1Thread.start();
                 }
+                // If player 2 thread is unassigned or inactive
                 else if (p2Thread == null || p2Thread.isActive() != true)
                 {
+                    // Assign a new server thread based on socket and create new player 2
                     p2Thread = new ServerThread(connectionSocket, players, 1);
                     players[1] = new Player(false, 350, 1);
                     p2Thread.start();
                 }
-                else
+                else // Otherwise, we're already at max users,
                 {
+                    // So we notify the user and do nothing
                     System.out.println("Already at max players! Please wait!");
                 }
 
